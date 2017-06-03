@@ -1,0 +1,46 @@
+from flask import Flask, jsonify
+from flask import request
+
+app = Flask(__name__)
+
+@app.route("/tasks", methods=["GET"])
+def index():
+	return
+
+@app.route("/tasks/<string:id>", methods=["GET"])
+def show(id):
+	pass
+
+@app.route("/tasks", methods=["POST"])
+def create():
+	# title = request.form["title"]
+	# description = request.form["description"]
+
+	# new_task_id = 
+
+	# return jsonify({
+	# 	"id": new_task_id,
+	# 	"title":
+	# 	"description":
+	# 	"done":
+	# })
+
+@app.route("/tasks/<string:id>", methods=["PUT"])
+def update(id):
+	pass
+	# return id
+	# if nr_of_updated_items == 0:
+	# 	abort(400)
+	# else:
+	# 	return jsonify
+
+@app.route("/tasks/<string:id>", methods=["DELETE"])
+def delete(id):
+	pass
+	# if(deleted):
+	# 	return make_response(' ',200)
+	# else:
+	# 	return abort(404)
+
+if __name__ == "__main__":
+	app.run(debug=True)
