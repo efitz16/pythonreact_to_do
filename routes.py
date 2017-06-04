@@ -1,7 +1,7 @@
 # from middleware import initialize_database as init_db
 # from middleware import fill_database as fill_db
 # from middleware import build_message
-from flask import Flask , render_template, request
+from flask import Flask , render_template, request, redirect, url_for
 from models import db, Task
 from forms import TaskForm
 
@@ -22,10 +22,12 @@ def show(id):
 	task = Task.query.get(id)
 	return render_template("show.html", task=task)
 
-@app.route("/tasks/<string:id>", methods=['PUT'])
-def edit():
-	tasks = Task.query.all()
-	return render_template("index.html", tasks=tasks)
+@app.route("/tasks/<id>", methods=['POST'])
+def edit(id):
+	task = Task.query.get(id)
+	task.done = True
+	db.session.commit()
+	return redirect(url_for('index'), code=302)
 
 @app.route("/about")
 def about():

@@ -10,6 +10,13 @@
     <div class="task">
     	<p>{{ task.title }}</p>
     	<p>{{ task.description }}</p>
+    	{% if task.done%}
+    	<p>DONE</p>
+    	{% else %}
+    	<form action="{{ url_for('edit', id=task.uid) }}" method="post">
+    	<button type="submit">Finish</button>
+    	</form>
+    	{% endif %}
     </div>
   {% endfor %}
   {% endif %}
