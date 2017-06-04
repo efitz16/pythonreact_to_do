@@ -1,8 +1,8 @@
 # from middleware import initialize_database as init_db
 # from middleware import fill_database as fill_db
 # from middleware import build_message
-from flask import Flask , render_template, request, redirect, url_for
-from models import db, Task
+from flask import Flask, render_template, request, redirect, url_for
+from models import db, Task, MethodRewriteMiddleware
 from forms import TaskForm
 
 app = Flask(__name__)
@@ -17,21 +17,30 @@ def index():
 	tasks = Task.query.all()
 	return render_template("index.html", tasks=tasks)
 
+@app.route("/about")
+def about():
+	return render_template("about.html")
+
 @app.route("/tasks/<id>", methods=['GET'])
 def show(id):
 	task = Task.query.get(id)
 	return render_template("show.html", task=task)
 
-@app.route("/tasks/<id>", methods=['POST'])
+@app.route("/tasks/<id>", methods=['PATCH'])
 def edit(id):
 	task = Task.query.get(id)
 	task.done = True
 	db.session.commit()
 	return redirect(url_for('index'), code=302)
 
-@app.route("/about")
-def about():
-	return render_template("about.html")
+# @app.route("/tasks/<id>", methods=['DELETE'])
+@app.route("/delete/tasks/<id>", methods=['POST'])
+def delete(id):
+	# return render_template("about.html")
+	task = Task.query.get(id)
+	db.session.delete(task)
+	db.session.commit()
+	return redirect(url_for('index'), code=302)
 
 @app.route("/tasks", methods=['GET', 'POST'])
 def create():

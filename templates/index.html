@@ -14,9 +14,15 @@
     	<p>DONE</p>
     	{% else %}
     	<form action="{{ url_for('edit', id=task.uid) }}" method="post">
-    	<button type="submit">Finish</button>
+    	  <!-- <input type="hidden" name="_method" value="PATCH"> -->
+    	  <button type="submit">Finish</button>
     	</form>
     	{% endif %}
+    	<!-- <form action="{{ url_for('delete', id=task.uid) }}" method="POST"> -->
+    	<form action="{{ url_for('delete', id=task.uid) }}" method="POST">
+    	  <!-- <input type="hidden" name="_method" value="DELETE"> -->
+    	  <button type="submit">Delete</button>
+    	</form>
     </div>
   {% endfor %}
   {% endif %}
