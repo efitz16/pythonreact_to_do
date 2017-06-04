@@ -2,7 +2,15 @@
 
 {% block content %}
   <div>
-  	hey
   </div>
   <a href="{{ url_for('about') }}">About</a>
+  <a href="{{ url_for('create') }}">New</a>
+  {% if not tasks.length == 0 %}
+  {% for task in tasks %}
+    <div class="task">
+    	<p>{{ task.title }}</p>
+    	<p>{{ task.description }}</p>
+    </div>
+  {% endfor %}
+  {% endif %}
 {% endblock %}

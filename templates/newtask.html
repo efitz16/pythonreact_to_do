@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <form method="POST" action="/new/task">
+  <form method="POST" action="/tasks">
     {{ form.hidden_tag() }}
     <div>
     	{{ form.title.label }}
@@ -11,6 +11,8 @@
     	{{ form.description.label }}
     	{{ form.description }}
     </div>
-    {{ form.submit }}
+    <div>
+    <input type="submit" value="Add comment">
+    </div>
   </form>
 {% endblock %}
