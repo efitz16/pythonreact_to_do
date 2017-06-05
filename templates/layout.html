@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Todo App</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.2/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.2/JSXTransformer.js"></script>
+</head>
+<body>
+<h1>Task todo app</h1>
+ <div id="mount-point"></div>
+  
+</body>
+  <script type="text/jsx" src="components/task.jsx"></script>
+   <script type="text/jsx">
+     var TaskBox = React.createClass({
+       getInitialState: function() {
+         return {tasks: []};
+       },
+
+       loadTasks: function() {
+       debugger;
+         $.ajax({
+           url: '/tasks',
+           method: 'get',
+           dataType: 'json',
+           cache: false,
+           success: function(result) {
+             this.setState({tasks: result.tasks});
+           }.bind(this)
+         });
+       },
+     
+       componentDidMount: function() {
+         this.loadTasks();
+         setInterval(this.loadTasks, this.props.pollInterval);
+       },
+     
+       render: function() {
+         return (
+           <div className="postsBox" >
+             <h1>Tasks</h1>
+             <!-- <NewPostForm onPostSubmit={this.handleTaskSubmit} /> -->
+             <!-- <TasksList posts={this.state.tasks}/> -->
+             <Tasks data={this.state.tasks}/>
+           </div>
+         );
+       }
+    });
+
+    var Tasks = React.createClass({
+      render: function() {
+        console.log(this.props.data);
+
+        return (
+      <ul className="PlayerList">
+        // I'm the Player List {this.props.tasks}
+        // <Player author="The Mini John" />
+
+      </ul>
+    )
+      }
+    });
+
+
+var TasksList = React.createClass({
+  render: function() {
+    var tasksNodes = this.props.tasks.map(function(task) {
+      return (
+        <div key={task.id} className="tasksList">
+          <Task id={task.id} title={task.title} description={task.description} onTaskDelete={this.props.onTaskDelete}/>
+        </div>
+      );
+    }.bind(this));
+    return (
+      <div className="tasksList">
+        {tasksNodes}
+      </div>
+    );
+  }
+});
+
+var Task = React.createClass({
+  rawMarkup: function() {
+    var rawMarkup = marked(this.props.description.toString(), {sanitize: true});
+    return { __html: rawMarkup };
+  },
+
+  handleTaskDelete: function(e) {
+    e.preventDefault();
+    this.props.onTaskDelete(this.props.id);
+  },
+
+  render: function() {
+    return(
+      <div className="task">
+        <h2 className="taskTitle">{this.props.title} <a href="#" onClick={this.handleTaskDelete}>x</a></h2>
+        <div className="TaskContent">
+          <span dangerouslySetInnerHTML={this.rawMarkup()} />
+        </div>
+      </div>
+    );
+  }
+});
+
+
+
+    ReactDOM.render(
+  <TaskBox /> ,
+  document.getElementById('mount-point')
+);
+
+   </script>
+</html>
