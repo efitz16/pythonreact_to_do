@@ -1,21 +1,32 @@
 # from middleware import initialize_database as init_db
 # from middleware import fill_database as fill_db
 # from middleware import build_message
-from flask import Flask, render_template, request, redirect, url_for
-from models import db, Task, MethodRewriteMiddleware
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from models import db, Task
+# , MethodRewriteMiddleware
 from forms import TaskForm
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/pyflasktodo'
+ma = Marshmallow(app)
 db.init_app(app)
+
+class TaskSchema(ma.Schema):
+    class Meta:
+        model = Task
+
+task_schema = TaskSchema()
+tasks_schema = TaskSchema(many=True)
 
 app.secret_key = "developement-key"
 
 @app.route("/")
 def index():
 	tasks = Task.query.all()
-	return render_template("index.html", tasks=tasks)
+	return render_template("layout.html", tasks=tasks)
 
 @app.route("/about")
 def about():
@@ -42,6 +53,11 @@ def delete(id):
 	db.session.commit()
 	return redirect(url_for('index'), code=302)
 
+@app.route("/new/tasks", methods=['GET'])
+def new():
+	form = TaskForm()
+	return render_template('newtask.html', form=form)
+
 @app.route("/tasks", methods=['GET', 'POST'])
 def create():
 	form = TaskForm()
@@ -51,7 +67,9 @@ def create():
 		db.session.commit()
 		return "Success!"
 	elif request.method == 'GET':
-		return render_template('newtask.html', form=form)
+		tasks = Task.query.all()
+		# return render_template("layout.html", tasks=tasks)
+		return jsonify({'tasks': tasks_schema.dump(tasks).data})	
 
 if __name__ == "__main__":
 	app.run(debug=True)
